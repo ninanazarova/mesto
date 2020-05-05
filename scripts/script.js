@@ -1,68 +1,67 @@
 // Переменные
 
-const placesList = document.querySelector(".places-list");
-const cardTemplate = document
-  .querySelector("#card-template")
-  .content.querySelector(".place-card");
+const popupTemplate = document
+  .querySelector("#popup-template")
+  .content.querySelector(".popup");
 const popup = document.querySelector(".popup");
-const popupOpenBtn = document.querySelector(".user-info__button");
-const popupCloseBtn = document.querySelector(".popup__close");
-const form = document.forms.new;
 
-// Функции
+function createPopup(args) {
+  const popup = popupTemplate.cloneNode(true);
 
-function createCard(linkValue, nameValue) {
-  const placeCard = cardTemplate.cloneNode(true);
-  const bgImage = placeCard.querySelector(".place-card__image");
-  const name = placeCard.querySelector(".place-card__name");
+  // Заполняем шаблон данными
+  popup.querySelector(".popup__title").textContent = args.title;
 
-  bgImage.setAttribute("style", `background-image: url(${linkValue})`);
-  name.textContent = nameValue;
-  return placeCard;
-}
+  const inputs = popup.querySelectorAll(".popup__input");
+  inputs[0].classList.add(args.inputs[0].class);
+  inputs[1].classList.add(args.inputs[1].class);
 
-function createCards(cards) {
-  cards.forEach(function (elem) {
-    const card = createCard(elem.link, elem.name);
-    placesList.appendChild(card);
-  });
-}
+  inputs[0].setAttribute("placeholder", args.inputs[0].placeholder);
+  inputs[1].setAttribute("placeholder", args.inputs[1].placeholder);
 
-function togglePopup() {
-  popup.classList.toggle("popup_is-opened");
-}
+  popup.querySelector(".popup__button").textContent = args.buttonName;
 
-function handlePlaceListClick(event) {
-  if (event.target.classList.contains("place-card__like-icon")) {
-    event.target.classList.toggle("place-card__like-icon_liked");
-  }
-  if (event.target.classList.contains("place-card__delete-icon")) {
-    event.target
-      .closest(".places-list")
-      .removeChild(event.target.closest(".place-card"));
-  }
-}
+  // Достаем кнопки и формы для конкретного попапа
+  const closeButton = popup.querySelector(".popup__close");
+  const form = popup.querySelector(".popup__form");
 
-function addCard(event) {
-  event.preventDefault();
-
-  const link = form.elements.link;
-  const name = form.elements.name;
-  const placeCard = createCard(link.value, name.value);
-
-  placesList.appendChild(placeCard);
-
-  togglePopup();
-  form.reset();
+  return {
+    closeButton,
+    form,
+    togglePopup: () => {
+      popup.classList.toggle("popup_is-opened");
+    },
+    insertAt: (node) => {
+      node.appendChild(popup);
+    },
+  };
 }
 
 // Слушатели событий
+const root = document.querySelector(".root");
 
-popupOpenBtn.addEventListener("click", togglePopup);
-popupCloseBtn.addEventListener("click", togglePopup);
-placesList.addEventListener("click", handlePlaceListClick);
-form.addEventListener("submit", addCard);
+const addCardPopup = createPopup({
+  title: "Новое место",
+  buttonName: "+",
+  inputs: [
+    {
+      class: "popup__input_type_name",
+      placeholder: "Название",
+    },
+    {
+      class: "popup__input_type_link-url",
+      placeholder: "Ссылка на картинку",
+    },
+  ],
+});
+
+addCardPopup.insertAt(root);
+
+addCardPopup.closeButton.addEventListener("click", addCardPopup.togglePopup);
+addCardPopup.form.addEventListener("submit", addCardListener(addCardPopup));
+
+const addCardOpen = document.querySelector(".user-info__button");
+addCardOpen.addEventListener("click", addCardPopup.togglePopup);
 
 // Вызовы функций
 
-createCards(initialCards);
+insertCards(initialCards);
