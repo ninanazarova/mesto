@@ -3,6 +3,24 @@ const cardTemplate = document
   .querySelector("#card-template")
   .content.querySelector(".place-card");
 
+const addCardOpen = document.querySelector(".user-info__button");
+
+// Создаем попап для карточек
+const addCardPopup = createPopup({
+  title: "Новое место",
+  buttonName: "+",
+  inputs: [
+    {
+      name: "name",
+      placeholder: "Название",
+    },
+    {
+      name: "link",
+      placeholder: "Ссылка на картинку",
+    },
+  ],
+});
+
 function createCard(linkValue, nameValue) {
   const card = cardTemplate.cloneNode(true);
   const bgImage = card.querySelector(".place-card__image");
@@ -11,23 +29,6 @@ function createCard(linkValue, nameValue) {
   bgImage.setAttribute("style", `background-image: url(${linkValue})`);
   name.textContent = nameValue;
   return card;
-}
-
-function insertCards(cards) {
-  cards.forEach(function (elem) {
-    const card = createCard(elem.link, elem.name);
-    cardsList.appendChild(card);
-  });
-}
-
-function handleCardClick(event) {
-  const target = event.target;
-  if (target.classList.contains("place-card__like-icon")) {
-    target.classList.toggle("place-card__like-icon_liked");
-  }
-  if (target.classList.contains("place-card__delete-icon")) {
-    target.closest(".places-list").removeChild(target.closest(".place-card"));
-  }
 }
 
 function addCardListener(popup) {
@@ -45,4 +46,31 @@ function addCardListener(popup) {
   };
 }
 
+// Добавляем карточки из data.js
+function insertCards(cards) {
+  cards.forEach(function (elem) {
+    const card = createCard(elem.link, elem.name);
+    cardsList.appendChild(card);
+  });
+}
+
+function handleCardClick(event) {
+  const target = event.target;
+  if (target.classList.contains("place-card__like-icon")) {
+    target.classList.toggle("place-card__like-icon_liked");
+  }
+  if (target.classList.contains("place-card__delete-icon")) {
+    target.closest(".places-list").removeChild(target.closest(".place-card"));
+  }
+}
+
 cardsList.addEventListener("click", handleCardClick);
+
+addCardPopup.insertAt(root);
+
+addCardOpen.addEventListener("click", addCardPopup.togglePopup);
+addCardPopup.closeButton.addEventListener("click", addCardPopup.togglePopup);
+addCardPopup.form.addEventListener("submit", addCardListener(addCardPopup));
+
+//Добавляем дефолтные карточки
+insertCards(initialCards);

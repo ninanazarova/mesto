@@ -5,6 +5,25 @@ const popupTemplate = document
   .content.querySelector(".popup");
 const popup = document.querySelector(".popup");
 
+const root = document.querySelector(".root");
+
+// {
+//   title: "Редактировать страницу",
+//   buttonName: "Сохранить",
+//   inputs: [
+//     {
+//       name: "name",
+//       placeholder: "Имя",
+//     },
+//     {
+//       name: "about",
+//       placeholder: "О себе",
+//     },
+//   ],
+// }
+
+//Функция, создающая поп апы
+
 function createPopup(args) {
   const popup = popupTemplate.cloneNode(true);
 
@@ -12,9 +31,8 @@ function createPopup(args) {
   popup.querySelector(".popup__title").textContent = args.title;
 
   const inputs = popup.querySelectorAll(".popup__input");
-  inputs[0].classList.add(args.inputs[0].class);
-  inputs[1].classList.add(args.inputs[1].class);
-
+  inputs[0].setAttribute("name", args.inputs[0].name);
+  inputs[1].setAttribute("name", args.inputs[1].name);
   inputs[0].setAttribute("placeholder", args.inputs[0].placeholder);
   inputs[1].setAttribute("placeholder", args.inputs[1].placeholder);
 
@@ -36,32 +54,4 @@ function createPopup(args) {
   };
 }
 
-// Слушатели событий
-const root = document.querySelector(".root");
-
-const addCardPopup = createPopup({
-  title: "Новое место",
-  buttonName: "+",
-  inputs: [
-    {
-      class: "popup__input_type_name",
-      placeholder: "Название",
-    },
-    {
-      class: "popup__input_type_link-url",
-      placeholder: "Ссылка на картинку",
-    },
-  ],
-});
-
-addCardPopup.insertAt(root);
-
-addCardPopup.closeButton.addEventListener("click", addCardPopup.togglePopup);
-addCardPopup.form.addEventListener("submit", addCardListener(addCardPopup));
-
-const addCardOpen = document.querySelector(".user-info__button");
-addCardOpen.addEventListener("click", addCardPopup.togglePopup);
-
 // Вызовы функций
-
-insertCards(initialCards);
