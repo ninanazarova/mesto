@@ -53,5 +53,3 @@ function createPopup(args) {
     },
   };
 }
-
-// Вызовы функций
