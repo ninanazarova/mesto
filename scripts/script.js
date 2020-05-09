@@ -40,12 +40,6 @@ function createPopup(args) {
     span.setAttribute("id", `${inputs[i].name}-error`);
   });
 
-  //добавляем id для элементов с текстом ошибки
-  const spanID = inputs[0].nextElementSibling;
-  const spanID1 = inputs[1].nextElementSibling;
-  spanID.setAttribute("id", `${inputs[0].name}-error`);
-  spanID1.setAttribute("id", `${inputs[1].name}-error`);
-
   popup.querySelector(".popup__button").textContent = args.buttonName;
 
   // Кнопки и формы для конкретного попапа
