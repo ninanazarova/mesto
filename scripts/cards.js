@@ -72,18 +72,6 @@ function handleCardClick(event) {
   }
 }
 
-function handleCardClose(popup) {
-  return function () {
-    popup.togglePopup();
-    popup.form.reset();
-    // Удаляем спаны с ошибками при закрытии поп апа.
-    Array.from(popup.form.querySelectorAll(".error")).forEach(
-      (error) => (error.textContent = "")
-    );
-    makeDisabledSubmit(popup.form);
-  };
-}
-
 // Открытие картинки при нажатии на карточку
 function createImgContainer(linkValue) {
   const markup = `
@@ -118,19 +106,6 @@ const cardValidators = {
   link: [checkEmpty, checkIsUrl],
 };
 
-function validateCardForm(form) {
-  const elements = [...form.elements];
-  const inputs = elements.filter((input) => {
-    return input.type !== "submit" && input.type !== "button";
-  });
-
-  return inputs.every((input) => {
-    return cardValidators[input.name].every((validator) => {
-      return validator(input);
-    });
-  });
-}
-
 // функция обрабатывает форму добавления карточки
 function handlerCardAddForm(event) {
   const input = event.target;
@@ -141,7 +116,7 @@ function handlerCardAddForm(event) {
     addError(input);
   });
 
-  if (validateCardForm(form)) {
+  if (validateForm(form, cardValidators)) {
     makeEnabledSubmit(form);
   } else {
     makeDisabledSubmit(form);
@@ -158,10 +133,7 @@ cardsList.addEventListener("click", handleCardClick);
 cardAddPopup.insertAt(root);
 
 addCardOpen.addEventListener("click", cardAddPopup.togglePopup);
-cardAddPopup.closeButton.addEventListener(
-  "click",
-  handleCardClose(cardAddPopup)
-);
+cardAddPopup.closeButton.addEventListener("click", handleClose(cardAddPopup));
 cardAddPopup.form.addEventListener("submit", handleAddCard(cardAddPopup));
 
 cardAddPopup.form.addEventListener("submit", sendAddCardForm);

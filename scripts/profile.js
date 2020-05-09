@@ -27,6 +27,8 @@ function handleEditClick() {
   const name = document.querySelector(".user-info__name").textContent;
   const about = document.querySelector(".user-info__job").textContent;
 
+  makeEnabledSubmit(profileEditPopup.form);
+
   // вставить в поп ап
   let nameInput = profileEditPopup.form.elements.name;
   let aboutInput = profileEditPopup.form.elements.about;
@@ -55,15 +57,42 @@ function editProfileListener(popup) {
   };
 }
 
+// == Валидация ==
+const profileValidators = {
+  name: [checkEmpty, checkLength],
+  about: [checkEmpty, checkLength],
+};
+
+function handleProfileForm(event) {
+  const input = event.target;
+  const form = event.currentTarget;
+
+  profileValidators[input.name].forEach((validator) => {
+    validator(input);
+    addError(input);
+  });
+
+  if (validateForm(form, profileValidators)) {
+    makeEnabledSubmit(form);
+  } else {
+    makeDisabledSubmit(form);
+  }
+}
+
+// == Лисенеры ==
+
 profileEditPopup.insertAt(root);
 
 editProfileOpen.addEventListener("click", handleEditClick);
 
 profileEditPopup.closeButton.addEventListener(
   "click",
-  profileEditPopup.togglePopup
+  handleClose(profileEditPopup)
 );
 profileEditPopup.form.addEventListener(
   "submit",
   editProfileListener(profileEditPopup)
 );
+
+profileEditPopup.form.addEventListener("submit", sendAddCardForm);
+profileEditPopup.form.addEventListener("input", handleProfileForm);
