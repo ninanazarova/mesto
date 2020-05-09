@@ -1,6 +1,6 @@
 const editProfileOpen = document.querySelector(".user-info__edit");
 
-const editProfilePopup = createPopup({
+const profileEditPopup = createPopup({
   title: "Редактировать страницу",
   buttonName: "Сохранить",
   inputs: [
@@ -17,7 +17,7 @@ const editProfilePopup = createPopup({
 
 //функция, которая меняет шрифт у кнопки "сохранить"
 function changeFontSize() {
-  editProfilePopup.form[2].style["font-size"] = "18px";
+  profileEditPopup.form[2].style["font-size"] = "18px";
 }
 
 // функция, которая переносит текущие данные в форму
@@ -28,14 +28,14 @@ function handleEditClick() {
   const about = document.querySelector(".user-info__job").textContent;
 
   // вставить в поп ап
-  let nameInput = editProfilePopup.form.elements.name;
-  let aboutInput = editProfilePopup.form.elements.about;
+  let nameInput = profileEditPopup.form.elements.name;
+  let aboutInput = profileEditPopup.form.elements.about;
 
   nameInput.value = name;
   aboutInput.value = about;
 
   changeFontSize();
-  editProfilePopup.togglePopup();
+  profileEditPopup.togglePopup();
 }
 
 function editProfileListener(popup) {
@@ -55,15 +55,15 @@ function editProfileListener(popup) {
   };
 }
 
-editProfilePopup.insertAt(root);
+profileEditPopup.insertAt(root);
 
 editProfileOpen.addEventListener("click", handleEditClick);
 
-editProfilePopup.closeButton.addEventListener(
+profileEditPopup.closeButton.addEventListener(
   "click",
-  editProfilePopup.togglePopup
+  profileEditPopup.togglePopup
 );
-editProfilePopup.form.addEventListener(
+profileEditPopup.form.addEventListener(
   "submit",
-  editProfileListener(editProfilePopup)
+  editProfileListener(profileEditPopup)
 );
