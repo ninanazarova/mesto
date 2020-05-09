@@ -56,10 +56,16 @@ function insertCards(cards) {
   });
 }
 
+// Функция-обработчик всех кликов по карточке
 function handleCardClick(event) {
   const target = event.target;
   if (target.classList.contains("place-card__like-icon")) {
     target.classList.toggle("place-card__like-icon_liked");
+  }
+  if (target.classList.contains("place-card__image")) {
+    const bg = target.style["background-image"];
+    const link = regexpImageUrl.exec(bg)[1];
+    createImgContainer(link);
   }
   if (target.classList.contains("place-card__delete-icon")) {
     target.closest(".places-list").removeChild(target.closest(".place-card"));
