@@ -79,10 +79,6 @@ function handleProfileForm(event) {
   }
 }
 
-// function sendProfileForm(event) {
-
-// }
-
 // == Лисенеры ==
 
 profileEditPopup.insertAt(root);
