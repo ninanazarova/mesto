@@ -31,10 +31,24 @@
         <div class="popup__content">
           <img src="./images/close.svg" alt="" class="popup__close" />
           <h3 class="popup__title"></h3>
-          <form class="popup__form">
-            <input type="text" name="" class="popup__input" placeholder="" />
-            <input type="text" name="" class="popup__input" placeholder="" />
-            <button type class="button popup__button"></button>
+          <form class="popup__form" novalidate>
+            <input
+              type="text"
+              name=""
+              class="popup__input"
+              placeholder=""
+              required
+            />
+            <span class="error"></span>
+            <input
+              type="text"
+              name=""
+              class="popup__input"
+              placeholder=""
+              required
+            />
+            <span class="error"></span>
+            <button type="submit" class="button popup__button"></button>
           </form>
         </div>
       </div>

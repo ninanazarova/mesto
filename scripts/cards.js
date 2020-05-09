@@ -6,8 +6,9 @@ const cardTemplate = document
 const addCardOpen = document.querySelector(".user-info__button");
 
 const regexpImageUrl = /^url\(\"(\S+)\"\)/;
+
 // Создаем попап для карточек
-const addCardPopup = createPopup({
+const cardAddPopup = createPopup({
   title: "Новое место",
   buttonName: "+",
   inputs: [
@@ -32,7 +33,7 @@ function createCard(linkValue, nameValue) {
   return card;
 }
 
-function addCardListener(popup) {
+function handleAddCard(popup) {
   return function (event) {
     event.preventDefault();
 
@@ -48,7 +49,6 @@ function addCardListener(popup) {
 }
 
 // Функция для добавления карточки из data.js
-
 function insertCards(cards) {
   cards.forEach(function (elem) {
     const card = createCard(elem.link, elem.name);
@@ -72,18 +72,19 @@ function handleCardClick(event) {
   }
 }
 
-cardsList.addEventListener("click", handleCardClick);
+function handleCardClose(popup) {
+  return function () {
+    popup.togglePopup();
+    popup.form.reset();
+    // Удаляем спаны с ошибками при закрытии поп апа.
+    Array.from(popup.form.querySelectorAll(".error")).forEach(
+      (error) => (error.textContent = "")
+    );
+    makeDisabledSubmit(popup.form);
+  };
+}
 
-addCardPopup.insertAt(root);
-
-addCardOpen.addEventListener("click", addCardPopup.togglePopup);
-addCardPopup.closeButton.addEventListener("click", addCardPopup.togglePopup);
-addCardPopup.form.addEventListener("submit", addCardListener(addCardPopup));
-
-//Добавляем дефолтные карточки
-insertCards(initialCards);
-
-// Открытие картинки
+// Открытие картинки при нажатии на карточку
 function createImgContainer(linkValue) {
   const markup = `
   <div class="image-popup image-popup_is-opened">
@@ -102,3 +103,70 @@ function createImgContainer(linkValue) {
     imgPopup.classList.toggle("image-popup_is-opened");
   });
 }
+
+function sendAddCardForm(event) {
+  event.preventDefault();
+  event.target.reset();
+  makeDisabledSubmit(event.currentTarget);
+}
+
+// == Валидация ==
+
+// Список проверок для каждого инпута.
+const cardValidators = {
+  name: [checkEmpty, checkLength],
+  link: [checkEmpty, checkIsUrl],
+};
+
+function validateCardForm(form) {
+  const elements = [...form.elements];
+  const inputs = elements.filter((input) => {
+    return input.type !== "submit" && input.type !== "button";
+  });
+
+  return inputs.every((input) => {
+    return cardValidators[input.name].every((validator) => {
+      return validator(input);
+    });
+  });
+}
+
+// функция обрабатывает форму добавления карточки
+function handlerCardAddForm(event) {
+  const input = event.target;
+  const form = event.currentTarget;
+
+  cardValidators[input.name].forEach((validator) => {
+    validator(input);
+    addError(input);
+  });
+
+  if (validateCardForm(form)) {
+    makeEnabledSubmit(form);
+  } else {
+    makeDisabledSubmit(form);
+  }
+}
+
+// == Лисенеры ==
+
+// Добавляем дефолтные карточки
+insertCards(initialCards);
+
+cardsList.addEventListener("click", handleCardClick);
+
+cardAddPopup.insertAt(root);
+
+addCardOpen.addEventListener("click", cardAddPopup.togglePopup);
+cardAddPopup.closeButton.addEventListener(
+  "click",
+  handleCardClose(cardAddPopup)
+);
+cardAddPopup.form.addEventListener("submit", handleAddCard(cardAddPopup));
+
+cardAddPopup.form.addEventListener("submit", sendAddCardForm);
+cardAddPopup.form.addEventListener("input", handlerCardAddForm);
+
+// Отключаем кнопку, т.к. при создании поп апа инпуты пустые и
+// это не валидные входные данные
+makeDisabledSubmit(cardAddPopup.form);
