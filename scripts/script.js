@@ -31,16 +31,14 @@ function createPopup(args) {
   popup.querySelector(".popup__title").textContent = args.title;
 
   const inputs = popup.querySelectorAll(".popup__input");
-  inputs[0].setAttribute("name", args.inputs[0].name);
-  inputs[1].setAttribute("name", args.inputs[1].name);
-  inputs[0].setAttribute("placeholder", args.inputs[0].placeholder);
-  inputs[1].setAttribute("placeholder", args.inputs[1].placeholder);
+  Array.from(inputs).forEach((input, i) => {
+    input.setAttribute("name", args.inputs[i].name);
+    input.setAttribute("placeholder", args.inputs[i].placeholder);
 
-  //добавляем id для элементов с текстом ошибки
-  const spanID = inputs[0].nextElementSibling;
-  const spanID1 = inputs[1].nextElementSibling;
-  spanID.setAttribute("id", `${inputs[0].name}-error`);
-  spanID1.setAttribute("id", `${inputs[1].name}-error`);
+    //добавляем id для элементов с текстом ошибки
+    const span = inputs[i].nextElementSibling;
+    span.setAttribute("id", `${inputs[i].name}-error`);
+  });
 
   popup.querySelector(".popup__button").textContent = args.buttonName;
 
@@ -102,6 +100,19 @@ function checkIsUrl(input) {
   return true;
 }
 
+function validateForm(form, validators) {
+  const elements = [...form.elements];
+  const inputs = elements.filter((input) => {
+    return input.type !== "submit" && input.type !== "button";
+  });
+
+  return inputs.every((input) => {
+    return validators[input.name].every((validator) => {
+      return validator(input);
+    });
+  });
+}
+
 // Функция добавления/удаления ошибки с инпута
 
 function addError(input) {
@@ -121,4 +132,16 @@ function makeDisabledSubmit(form) {
   const submit = form.lastElementChild;
   submit.classList.remove("popup__button_enabled");
   submit.setAttribute("disabled", "disabled");
+}
+
+function handleClose(popup) {
+  return function () {
+    popup.togglePopup();
+    popup.form.reset();
+    // Удаляем спаны с ошибками при закрытии поп апа.
+    Array.from(popup.form.querySelectorAll(".error")).forEach(
+      (error) => (error.textContent = "")
+    );
+    makeDisabledSubmit(popup.form);
+  };
 }
