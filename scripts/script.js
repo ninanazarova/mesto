@@ -187,3 +187,10 @@ const script = (function () {
     sendForm,
   };
 })();
+
+// ==========================================
+const root = document.querySelector(".root");
+const createCard = ({ name, link }) => new Card({ name, link });
+
+const cardlist = new CardList(initialCards, createCard);
+cardlist.render(root);
