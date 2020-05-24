@@ -23,9 +23,11 @@
           <button class="button user-info__button">+</button>
         </div>
       </div>
-      <div class="places-list root__section"></div>
     </div>
 
+    <template id="cardlist-template" style="display: none;">
+      <div class="places-list root__section"></div>
+    </template>
     <template id="popup-template" style="display: none;">
       <div class="popup">
         <div class="popup__content">
@@ -70,8 +72,11 @@
     </template>
 
     <script src="./scripts/data.js"></script>
+
+    <script src="./scripts/Card.js"></script>
+    <script src="./scripts/CardList.js"></script>
+    <!-- <script src="./scripts/cards.js"></script> -->
     <script src="./scripts/script.js"></script>
-    <script src="./scripts/cards.js"></script>
     <script src="./scripts/profile.js"></script>
   </body>
 </html>
