@@ -23,11 +23,9 @@
           <button class="button user-info__button">+</button>
         </div>
       </div>
+      <div class="places-list root__section"></div>
     </div>
 
-    <template id="cardlist-template" style="display: none;">
-      <div class="places-list root__section"></div>
-    </template>
     <template id="popup-template" style="display: none;">
       <div class="popup">
         <div class="popup__content">
@@ -51,11 +49,19 @@
             />
             <span class="error"></span>
             <button
+              name="submit"
               type="submit"
               class="button popup__button popup__button_enabled"
             ></button>
           </form>
         </div>
+      </div>
+    </template>
+
+    <template id="image-template" style="display: none;">
+      <div class="image-popup__container">
+        <img src="" class="image-popup__image" />
+        <img src="./images/close.svg" class="popup__close" />
       </div>
     </template>
 
@@ -71,12 +77,12 @@
       </div>
     </template>
 
-    <script src="./scripts/data.js"></script>
-
     <script src="./scripts/Card.js"></script>
+    <script src="./scripts/data.js"></script>
     <script src="./scripts/CardList.js"></script>
-    <!-- <script src="./scripts/cards.js"></script> -->
+    <script src="./scripts/Popup.js"></script>
+    <script src="./scripts/UserInfo.js"></script>
+    <script src="./scripts/FormValidator.js"></script>
     <script src="./scripts/script.js"></script>
-    <script src="./scripts/profile.js"></script>
   </body>
 </html>
