@@ -2,30 +2,50 @@
 
 class Card {
   static _template = document.querySelector("#card-template").content;
-  constructor(obj) {
+  static _imgTemplate = document.querySelector("#image-template").content;
+  constructor(obj, onOpen) {
     this._name = obj.name;
     this._link = obj.link;
+    this._onOpen = onOpen;
   }
 
+  open = (event) => {
+    event.stopPropagation();
+    const imageContainer = Card._imgTemplate.cloneNode(true).children[0];
+    const image = imageContainer.querySelector(".image-popup__image");
+
+    image.setAttribute("src", this._link);
+    this._onOpen(imageContainer);
+  };
+
   like(event) {
+    event.stopPropagation();
     event.target.classList.toggle("place-card__like-icon_liked");
   }
 
   remove(event) {
+    event.stopPropagation();
     event.target.closest(".place-card").remove();
   }
 
-  render = (container) => {
-    this._view = Card._template.cloneNode(true).children[0];
+  create = () => {
+    const card = Card._template.cloneNode(true).children[0];
 
-    const image = this._view.querySelector(".place-card__image");
-    const name = this._view.querySelector(".place-card__name");
+    const image = card.querySelector(".place-card__image");
+    const name = card.querySelector(".place-card__name");
 
     image.setAttribute("style", `background-image: url(${this._link})`);
     name.textContent = this._name;
-
-    container.append(this._view);
+    this.setEventListeners(card);
+    return card;
   };
 
-  setEventListeners() {}
+  setEventListeners(card) {
+    const likeButton = card.querySelector(".place-card__like-icon");
+    const deleteButton = card.querySelector(".place-card__delete-icon");
+    const openImage = card.querySelector(".place-card__image");
+    openImage.addEventListener("click", this.open);
+    likeButton.addEventListener("click", this.like);
+    deleteButton.addEventListener("click", this.remove);
+  }
 }

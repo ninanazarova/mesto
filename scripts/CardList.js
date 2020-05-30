@@ -1,18 +1,17 @@
 "use strict";
 
 class CardList {
-  static _template = document.querySelector("#cardlist-template").content;
-
-  constructor(cards, createCard) {
-    this._cards = cards;
-    this._createCard = createCard;
+  constructor(node, initialCards, create) {
+    this._node = node;
+    this._cards = initialCards;
+    this._create = create;
   }
 
-  render = (container) => {
-    this._view = CardList._template.cloneNode(true).children[0];
-    container.append(this._view);
-    this._cards.forEach((item) => {
-      this._createCard(item).render(this._view);
-    });
+  addCard = (card) => {
+    this._node.append(this._create(card).create());
+  };
+
+  render = () => {
+    this._cards.forEach((card) => this._node.append(card.create()));
   };
 }
