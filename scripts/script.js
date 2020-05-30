@@ -1,28 +1,17 @@
 "use strict";
 
-const imgPopup = new Popup({
-  title: "Новое место",
-  buttonName: "+",
-  inputs: [
-    {
-      name: "name",
-      placeholder: "Название",
-    },
-    {
-      name: "link",
-      placeholder: "Ссылка на картинку",
-    },
-  ],
-});
+const imgPopup = new Popup({});
 
 const cardlist = new CardList(
   document.querySelector(".places-list"),
-  initialCards.map((card) => new Card(card, imgPopup.imgPopup)),
-  (cardObj) => new Card(cardObj, imgPopup.imgPopup)
+  initialCards.map((card) => new Card(card, imgPopup.imagePopup)),
+  (card) => new Card(card, imgPopup.imagePopup)
 );
 
-const addPopup = new Popup(
-  {
+cardlist.render();
+
+const addCardPopup = new Popup({
+  formContent: {
     title: "Новое место",
     buttonName: "+",
     inputs: [
@@ -36,15 +25,16 @@ const addPopup = new Popup(
       },
     ],
   },
-  cardlist.addCard
-);
+  addCard: cardlist.addCard,
+});
+
 const userInfo = new UserInfo(
   document.querySelector(".user-info__name").textContent,
   document.querySelector(".user-info__job").textContent
 );
 
-const editPopup = new Popup(
-  {
+const editProfilePopup = new Popup({
+  formContent: {
     title: "Редактировать страницу",
     buttonName: "Сохранить",
     inputs: [
@@ -58,36 +48,25 @@ const editPopup = new Popup(
       },
     ],
   },
-  cardlist.addCard,
-  userInfo.updateUserInfo,
-  userInfo.getUserInfo
-);
+  updateUserInfo: userInfo.updateUserInfo,
+  getUserInfo: userInfo.getUserInfo,
+});
 
-cardlist.render();
+const editProfileButton = document.querySelector(".user-info__edit");
+const addCardButton = document.querySelector(".user-info__button");
 
-// addPopup.closePopupListener();
-
-// cardlist.blabla(editPopup.open);
-// editPopup.closePopupListener();
-
-const editButton = document.querySelector(".user-info__edit");
-const addButton = document.querySelector(".user-info__button");
-
-editButton.addEventListener("click", (event) => {
-  editPopup.open(event);
+editProfileButton.addEventListener("click", (event) => {
+  editProfilePopup.open(event);
   new FormValidator(document.querySelector(".popup__form"), {
     name: ["empty", "length"],
     about: ["empty", "length"],
   });
 });
 
-addButton.addEventListener("click", (event) => {
-  addPopup.open(event);
+addCardButton.addEventListener("click", (event) => {
+  addCardPopup.open(event);
   new FormValidator(document.querySelector(".popup__form"), {
     name: ["empty", "length"],
     link: ["empty", "url"],
   });
 });
-
-// editPopup.render(root);
-// addPopup.render(root);

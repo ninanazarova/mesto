@@ -9,7 +9,8 @@ class Card {
     this._onOpen = onOpen;
   }
 
-  open = () => {
+  open = (event) => {
+    event.stopPropagation();
     const imageContainer = Card._imgTemplate.cloneNode(true).children[0];
     const image = imageContainer.querySelector(".image-popup__image");
 
@@ -18,6 +19,7 @@ class Card {
   };
 
   like(event) {
+    event.stopPropagation();
     event.target.classList.toggle("place-card__like-icon_liked");
   }
 

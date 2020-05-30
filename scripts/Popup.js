@@ -7,71 +7,77 @@ class Popup {
 
   static _root = document.querySelector(".root");
 
-  constructor(popupContent, addCard, updateUserInfo, getUserInfo) {
+  constructor({ formContent, addCard, updateUserInfo, getUserInfo }) {
     this.addCard = addCard;
     this.updateUserInfo = updateUserInfo;
     this.getUserInfo = getUserInfo;
     this.popup = Popup._popupTemplate.cloneNode(true);
+
+    if (formContent) {
+      this._handleForm(formContent);
+    }
+  }
+
+  _handleForm = (formContent) => {
     this.form = this.popup.querySelector(".popup__form");
-    // Заполняем шаблон данными
-    this.popup.querySelector(".popup__title").textContent = popupContent.title;
+
+    this.popup.querySelector(".popup__title").textContent = formContent.title;
+    this.popup.querySelector(".popup__button").textContent =
+      formContent.buttonName;
 
     const inputs = this.popup.querySelectorAll(".popup__input");
     Array.from(inputs).forEach((input, i) => {
-      input.setAttribute("name", popupContent.inputs[i].name);
-      input.setAttribute("placeholder", popupContent.inputs[i].placeholder);
+      input.setAttribute("name", formContent.inputs[i].name);
+      input.setAttribute("placeholder", formContent.inputs[i].placeholder);
 
-      //добавляем id для элементов с текстом ошибки
+      // добавляем id для элементов с текстом ошибки
       const span = inputs[i].nextElementSibling;
       span.setAttribute("id", `${inputs[i].name}-error`);
     });
-
-    this.popup.querySelector(".popup__button").textContent =
-      popupContent.buttonName;
-  }
+  };
 
   render = () => {
     Popup._root.append(this.popup);
   };
 
-  imgPopup = (markup) => {
+  imagePopup = (node) => {
     this.popup.innerHTML = "";
-    this.popup.appendChild(markup);
-    this.popup.classList.add("popup_is-opened");
-    this.render();
+    this.popup.appendChild(node);
     this.setEventListeners();
+
+    this.render();
   };
 
-  editPopup = () => {
-    this.popup.classList.add("popup_is-opened");
-    this.popup.querySelector(".popup__button").style["font-size"] = "18px";
+  editProfilePopup = () => {
+    const submit = this.form.elements.submit;
 
-    this.form.lastElementChild.classList.add("popup__button_enabled");
-    this.form.lastElementChild.removeAttribute("disabled", "disabled");
+    submit.style["font-size"] = "18px";
+    submit.classList.add("popup__button_enabled");
+    submit.removeAttribute("disabled", "disabled");
+
+    this._setSubmitListener(submit, (event) => {
+      event.preventDefault();
+      this.updateUserInfo(this.form);
+      this.close();
+    });
+
     const curUserInfo = this.getUserInfo();
 
     this.form.elements.name.value = curUserInfo.name;
     this.form.elements.about.value = curUserInfo.about;
 
-    this.render();
-    const submit = this.form.elements.submit;
-    submit.addEventListener("click", (event) => {
-      event.preventDefault();
-      this.updateUserInfo(this.form);
-
-      this.close();
-    });
     this.setEventListeners();
+
+    this.render();
   };
 
-  addPopup = () => {
-    this.popup.classList.add("popup_is-opened");
-
-    this.render();
+  addCardPopup = () => {
     const submit = this.form.elements.submit;
+
     submit.classList.remove("popup__button_enabled");
     submit.classList.add("popup__button_disabled");
-    submit.addEventListener("click", (event) => {
+
+    this._setSubmitListener(submit, (event) => {
       event.preventDefault();
       const name = this.form.elements.name.value;
       const link = this.form.elements.link.value;
@@ -79,29 +85,45 @@ class Popup {
       this.form.reset();
       this.close();
     });
+
     this.setEventListeners();
+
+    this.render();
   };
 
   open = (event) => {
     if (event.target === document.querySelector(".user-info__edit")) {
-      this.editPopup();
+      this.editProfilePopup();
     }
     if (event.target === document.querySelector(".user-info__button")) {
-      this.addPopup();
-    }
-    if (event.target === document.querySelector(".place-card__image")) {
-      this.imgPopup();
+      this.addCardPopup();
     }
   };
 
   close = () => {
-    this.popup.classList.remove("popup_is-opened");
+    this._removeEventListeners();
     this.popup.remove();
 
-    this.form.reset();
-    Array.from(this.form.querySelectorAll(".error")).forEach(
-      (error) => (error.textContent = "")
-    );
+    if (this.form) {
+      this.form.reset();
+      Array.from(this.form.querySelectorAll(".error")).forEach(
+        (error) => (error.textContent = "")
+      );
+    }
+  };
+
+  _setSubmitListener = (submit, listener) => {
+    submit.addEventListener("click", listener);
+
+    this.clearListeners = () => {
+      submit.removeEventListener("click", listener);
+    };
+  };
+
+  _removeEventListeners = () => {
+    if (this.clearListeners) {
+      this.clearListeners();
+    }
   };
 
   setEventListeners = () => {
