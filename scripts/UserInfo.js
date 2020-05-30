@@ -12,16 +12,14 @@ class UserInfo {
   };
 
   updateUserInfo = (form) => {
-    //берем значения полей.
+    //берем значения полей
     const nameInput = form.elements.name.value;
     const aboutInput = form.elements.about.value;
 
     //отправляем их в setUserInfo
     this.setUserInfo(nameInput, aboutInput);
 
-    //валидируем поля где то в другом месте!
     // отрисовываем новые значения в разметке
-
     document.querySelector(".user-info__name").textContent = nameInput;
     document.querySelector(".user-info__job").textContent = aboutInput;
   };

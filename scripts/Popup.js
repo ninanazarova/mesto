@@ -43,7 +43,8 @@ class Popup {
     this.popup.classList.add("popup_is-opened");
     this.popup.querySelector(".popup__button").style["font-size"] = "18px";
     const form = this.popup.querySelector(".popup__form");
-
+    form.lastElementChild.classList.add("popup__button_enabled");
+    form.lastElementChild.removeAttribute("disabled", "disabled");
     const curUserInfo = this.getUserInfo();
 
     form.elements.name.value = curUserInfo.name;
@@ -94,7 +95,12 @@ class Popup {
   close = () => {
     this.popup.classList.remove("popup_is-opened");
     this.popup.remove();
-    this.popup.querySelector(".popup__form").reset();
+
+    const form = this.popup.querySelector(".popup__form");
+    form.reset();
+    Array.from(form.querySelectorAll(".error")).forEach(
+      (error) => (error.textContent = "")
+    );
   };
 
   setEventListeners = () => {

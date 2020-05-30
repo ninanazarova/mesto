@@ -16,14 +16,15 @@ class FormValidator {
     //   name: ["empty", "length"],
     //   link: ["empty", "url"],
     // }
-    console.log(form);
     this._validators = validators;
     this.setEventListeners();
   }
+
   static _addError = (input) => {
     const errorElem = input.parentNode.querySelector(`#${input.name}-error`);
     errorElem.textContent = input.validationMessage;
   };
+
   static _checkEmpty = (input) => {
     input.setCustomValidity("");
 
@@ -68,11 +69,8 @@ class FormValidator {
           return FormValidator._checkEmpty(input);
       }
     });
-    FormValidator._addError(input);
-    return isValid;
 
-    // if input not valid show error message
-    // else hide error
+    return isValid;
   };
 
   setSubmitButtonState = () => {
@@ -90,14 +88,12 @@ class FormValidator {
       submit.classList.remove("popup__button_enabled");
       submit.setAttribute("disabled", "disabled");
     }
-    // for each changes of inputs
-    // if all inputs ok submit is active
-    // if any inputs ne ok submit disabled
   };
 
   setEventListeners = () => {
     this._form.addEventListener("input", (event) => {
       this.checkInputValidity(event.target);
+      FormValidator._addError(event.target);
       this.setSubmitButtonState();
     });
   };
