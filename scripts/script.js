@@ -73,7 +73,7 @@ cardlist.render();
 const editButton = document.querySelector(".user-info__edit");
 const addButton = document.querySelector(".user-info__button");
 
-editButton.addEventListener("click", function (event) {
+editButton.addEventListener("click", (event) => {
   editPopup.open(event);
   new FormValidator(document.querySelector(".popup__form"), {
     name: ["empty", "length"],
@@ -81,7 +81,7 @@ editButton.addEventListener("click", function (event) {
   });
 });
 
-addButton.addEventListener("click", function (event) {
+addButton.addEventListener("click", (event) => {
   addPopup.open(event);
   new FormValidator(document.querySelector(".popup__form"), {
     name: ["empty", "length"],
