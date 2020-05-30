@@ -1,3 +1,5 @@
+"use strict";
+
 class Popup {
   static _popupTemplate = document
     .querySelector("#popup-template")

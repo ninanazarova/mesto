@@ -1,3 +1,5 @@
+"use strict";
+
 const imgPopup = new Popup({
   title: "Новое место",
   buttonName: "+",

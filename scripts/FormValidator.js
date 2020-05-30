@@ -1,3 +1,5 @@
+"use strict";
+
 class FormValidator {
   static _errorMessages = {
     empty: "Это обязательное поле",
