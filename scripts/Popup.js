@@ -12,6 +12,7 @@ class Popup {
     this.updateUserInfo = updateUserInfo;
     this.getUserInfo = getUserInfo;
     this.popup = Popup._popupTemplate.cloneNode(true);
+    this.form = this.popup.querySelector(".popup__form");
     // Заполняем шаблон данными
     this.popup.querySelector(".popup__title").textContent = popupContent.title;
 
@@ -44,19 +45,19 @@ class Popup {
   editPopup = () => {
     this.popup.classList.add("popup_is-opened");
     this.popup.querySelector(".popup__button").style["font-size"] = "18px";
-    const form = this.popup.querySelector(".popup__form");
-    form.lastElementChild.classList.add("popup__button_enabled");
-    form.lastElementChild.removeAttribute("disabled", "disabled");
+
+    this.form.lastElementChild.classList.add("popup__button_enabled");
+    this.form.lastElementChild.removeAttribute("disabled", "disabled");
     const curUserInfo = this.getUserInfo();
 
-    form.elements.name.value = curUserInfo.name;
-    form.elements.about.value = curUserInfo.about;
+    this.form.elements.name.value = curUserInfo.name;
+    this.form.elements.about.value = curUserInfo.about;
 
     this.render();
-    const submit = form.elements.submit;
+    const submit = this.form.elements.submit;
     submit.addEventListener("click", (event) => {
       event.preventDefault();
-      this.updateUserInfo(form);
+      this.updateUserInfo(this.form);
 
       this.close();
     });
@@ -65,18 +66,17 @@ class Popup {
 
   addPopup = () => {
     this.popup.classList.add("popup_is-opened");
-    const form = this.popup.querySelector(".popup__form");
 
     this.render();
-    const submit = form.elements.submit;
+    const submit = this.form.elements.submit;
     submit.classList.remove("popup__button_enabled");
     submit.classList.add("popup__button_disabled");
     submit.addEventListener("click", (event) => {
       event.preventDefault();
-      const name = form.elements.name.value;
-      const link = form.elements.link.value;
+      const name = this.form.elements.name.value;
+      const link = this.form.elements.link.value;
       this.addCard({ name, link });
-      form.reset();
+      this.form.reset();
       this.close();
     });
     this.setEventListeners();
@@ -98,9 +98,8 @@ class Popup {
     this.popup.classList.remove("popup_is-opened");
     this.popup.remove();
 
-    const form = this.popup.querySelector(".popup__form");
-    form.reset();
-    Array.from(form.querySelectorAll(".error")).forEach(
+    this.form.reset();
+    Array.from(this.form.querySelectorAll(".error")).forEach(
       (error) => (error.textContent = "")
     );
   };

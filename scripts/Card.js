@@ -12,8 +12,8 @@ class Card {
   open = () => {
     const imageContainer = Card._imgTemplate.cloneNode(true).children[0];
     const image = imageContainer.querySelector(".image-popup__image");
-    image.setAttribute("src", this._link);
 
+    image.setAttribute("src", this._link);
     this._onOpen(imageContainer);
   };
 
