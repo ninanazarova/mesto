@@ -1,36 +1,33 @@
 "use strict";
 
 class Card {
-  static _template = document.querySelector("#card-template").content;
-  static _imgTemplate = document.querySelector("#image-template").content;
-  constructor(obj, onOpen) {
-    this._name = obj.name;
-    this._link = obj.link;
+
+  constructor(template, { name, link }, onOpen) {
+    this._template = template;
+    this._name = name;
+    this._link = link;
     this._onOpen = onOpen;
   }
 
   open = (event) => {
     event.stopPropagation();
-    const imageContainer = Card._imgTemplate.cloneNode(true).children[0];
-    const image = imageContainer.querySelector(".image-popup__image");
-
-    image.setAttribute("src", this._link);
-    this._onOpen(imageContainer);
+    this._onOpen(this._link);
   };
 
-  like(event) {
+  like = (event) => {
     event.stopPropagation();
     event.target.classList.toggle("place-card__like-icon_liked");
-  }
+  };
 
-  remove(event) {
+  remove = (event) => {
     event.stopPropagation();
     event.target.closest(".place-card").remove();
-  }
+
+    this._deleteEventListeners();
+  };
 
   create = () => {
-    const card = Card._template.cloneNode(true).children[0];
-
+    const card = this._template.cloneNode(true).children[0];
     const image = card.querySelector(".place-card__image");
     const name = card.querySelector(".place-card__name");
 
@@ -40,12 +37,18 @@ class Card {
     return card;
   };
 
-  setEventListeners(card) {
+  setEventListeners = (card) => {
     const likeButton = card.querySelector(".place-card__like-icon");
     const deleteButton = card.querySelector(".place-card__delete-icon");
     const openImage = card.querySelector(".place-card__image");
     openImage.addEventListener("click", this.open);
     likeButton.addEventListener("click", this.like);
     deleteButton.addEventListener("click", this.remove);
-  }
+
+    this._deleteEventListeners = () => {
+      openImage.removeEventListener("click", this.open);
+      likeButton.removeEventListener("click", this.like);
+      deleteButton.removeEventListener("click", this.remove);
+    };
+  };
 }

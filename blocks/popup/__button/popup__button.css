@@ -1,3 +1,4 @@
+@import url(./_font-size/popup__button_font-size_s.css);
 @import url(./_enabled/popup__button_enabled.css);
 
 .popup__button {

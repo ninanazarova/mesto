@@ -24,46 +24,78 @@
         </div>
       </div>
       <div class="places-list root__section"></div>
-    </div>
 
-    <template id="popup-template" style="display: none;">
-      <div class="popup">
+      <div class="popup edit-profile-popup">
         <div class="popup__content">
           <img src="./images/close.svg" alt="" class="popup__close" />
-          <h3 class="popup__title"></h3>
+          <h3 class="popup__title">Редактировать страницу</h3>
           <form class="popup__form" novalidate>
             <input
               type="text"
-              name=""
+              name="name"
               class="popup__input"
-              placeholder=""
+              placeholder="Имя"
               required
             />
-            <span class="error"></span>
+            <span id="name-error" class="error"></span>
             <input
               type="text"
-              name=""
+              name="about"
               class="popup__input"
-              placeholder=""
+              placeholder="О себе"
               required
             />
-            <span class="error"></span>
+            <span id="about-error" class="error"></span>
             <button
               name="submit"
               type="submit"
-              class="button popup__button popup__button_enabled"
-            ></button>
+              class="button popup__button popup__button_enabled popup__button_font-size_s"
+            >
+              Сохранить
+            </button>
           </form>
         </div>
       </div>
-    </template>
 
-    <template id="image-template" style="display: none;">
-      <div class="image-popup__container">
-        <img src="" class="image-popup__image" />
-        <img src="./images/close.svg" class="popup__close" />
+      <div class="popup add-card-popup">
+        <div class="popup__content">
+          <img src="./images/close.svg" alt="" class="popup__close" />
+          <h3 class="popup__title">Новое место</h3>
+          <form class="popup__form" novalidate>
+            <input
+              type="text"
+              name="name"
+              class="popup__input"
+              placeholder="Название"
+              required
+            />
+            <span id="name-error" class="error"></span>
+            <input
+              type="url"
+              name="link"
+              class="popup__input"
+              placeholder="Ссылка на картинку"
+              required
+            />
+            <span id="link-error" class="error"></span>
+            <button
+              name="submit"
+              type="submit"
+              class="button popup__button"
+              disabled="true"
+            >
+              +
+            </button>
+          </form>
+        </div>
       </div>
-    </template>
+      <div class="popup image-popup">
+        <div class="image-popup__container">
+          <img src="" class="popup__image" />
+          <img src="./images/close.svg" class="popup__close" />
+        </div>
+      </div>
+    </div>
 
     <template id="card-template" style="display: none;">
       <div class="place-card">
@@ -77,8 +109,8 @@
       </div>
     </template>
 
-    <script src="./scripts/Card.js"></script>
     <script src="./scripts/data.js"></script>
+    <script src="./scripts/Card.js"></script>
     <script src="./scripts/CardList.js"></script>
     <script src="./scripts/Popup.js"></script>
     <script src="./scripts/UserInfo.js"></script>
