@@ -1,7 +1,6 @@
 "use strict";
 
 class Card {
-
   constructor(template, { name, link }, onOpen) {
     this._template = template;
     this._name = name;
