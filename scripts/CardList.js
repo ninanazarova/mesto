@@ -7,11 +7,14 @@ class CardList {
     this._create = create;
   }
 
-  addCard = (card) => {
-    this._node.append(this._create(card).create());
+  addCard = (element) => {
+    this._node.append(element);
   };
 
-  render = () => {
-    this._cards.forEach((card) => this._node.append(card.create()));
+  render = (createPopupImg) => {
+    this._cards.forEach((elem) => {
+      const card = this._create(elem, createPopupImg);
+      this.addCard(card);
+    });
   };
 }

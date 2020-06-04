@@ -1,78 +1,64 @@
 "use strict";
 
 class FormValidator {
-  static _errorMessages = {
+  _errorMessages = {
     empty: "Это обязательное поле",
     wrongLength: "Должно быть от 2 до 30 символов",
     wrongUrl: "Здесь должна быть ссылка",
   };
 
-  constructor(form, validators) {
+  constructor(form) {
     this._form = form;
-    // {
-    //   name: ["empty", "length"],
-    //   about: ["empty", "length"],
-    // }
-
-    // {
-    //   name: ["empty", "length"],
-    //   link: ["empty", "url"],
-    // }
-    this._validators = validators;
     this.setEventListeners();
   }
 
-  static _addError = (input) => {
+  _addError = (input) => {
     const errorElem = input.parentNode.querySelector(`#${input.name}-error`);
     errorElem.textContent = input.validationMessage;
   };
 
-  static _checkEmpty = (input) => {
+  _checkEmpty = (input) => {
     input.setCustomValidity("");
 
     if (input.validity.valueMissing) {
-      input.setCustomValidity(FormValidator._errorMessages.empty);
+      input.setCustomValidity(this._errorMessages.empty);
       return false;
     }
 
     return true;
   };
 
-  static _checkLength = (input) => {
+  _checkLength = (input) => {
     input.setCustomValidity("");
     input.setAttribute("minlength", "2");
     input.setAttribute("maxlength", "30");
 
     if (input.validity.tooShort || input.validity.tooLong) {
-      input.setCustomValidity(FormValidator._errorMessages.wrongLength);
+      input.setCustomValidity(this._errorMessages.wrongLength);
       return false;
     }
     return true;
   };
 
-  static _checkIsUrl = (input) => {
+  _checkIsUrl = (input) => {
     input.setCustomValidity("");
-    input.setAttribute("type", "url");
-    if (input.validity.typeMismatch && input.type === "url") {
-      input.setCustomValidity(FormValidator._errorMessages.wrongUrl);
+    if (input.validity.typeMismatch) {
+      input.setCustomValidity(this._errorMessages.wrongUrl);
       return false;
     }
     return true;
   };
 
   checkInputValidity = (input) => {
-    const isValid = this._validators[input.name].every((validator) => {
-      switch (validator) {
-        case "url":
-          return FormValidator._checkIsUrl(input);
-        case "length":
-          return FormValidator._checkLength(input);
-        case "empty":
-          return FormValidator._checkEmpty(input);
-      }
-    });
+    const type = input.getAttribute("type");
+    switch (type) {
+      case "text":
+        return this._checkEmpty(input) && this._checkLength(input);
+      case "url":
+        return this._checkEmpty(input) && this._checkIsUrl(input);
+    }
 
-    return isValid;
+    return true;
   };
 
   setSubmitButtonState = () => {
@@ -95,7 +81,7 @@ class FormValidator {
   setEventListeners = () => {
     this._form.addEventListener("input", (event) => {
       this.checkInputValidity(event.target);
-      FormValidator._addError(event.target);
+      this._addError(event.target);
       this.setSubmitButtonState();
     });
   };

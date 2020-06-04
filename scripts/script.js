@@ -1,31 +1,67 @@
 "use strict";
 
-const imgPopup = new Popup({});
+const imgPopup = new Popup({ node: document.querySelector(".image-popup") });
 
-const cardlist = new CardList(
+const imagePopupNode = document.querySelector(".popup__image");
+
+function createPopupImg(imgLink) {
+  imagePopupNode.src = imgLink;
+  imgPopup.open();
+}
+
+const newCard = (elem, createPopupImg) => {
+  const card = new Card(
+    document.querySelector("#card-template").content,
+    elem,
+    createPopupImg
+  );
+  return card.create();
+};
+
+const placesList = new CardList(
   document.querySelector(".places-list"),
-  initialCards.map((card) => new Card(card, imgPopup.imagePopup)),
-  (card) => new Card(card, imgPopup.imagePopup)
+  initialCards,
+  newCard
 );
 
-cardlist.render();
+placesList.render(createPopupImg);
+
+const deleteErrors = (form) => {
+  const errorMessages = form.querySelectorAll(".error");
+  Array.from(errorMessages).forEach((error) => (error.textContent = ""));
+};
 
 const addCardPopup = new Popup({
-  formContent: {
-    title: "Новое место",
-    buttonName: "+",
-    inputs: [
-      {
-        name: "name",
-        placeholder: "Название",
-      },
-      {
-        name: "link",
-        placeholder: "Ссылка на картинку",
-      },
-    ],
-  },
-  addCard: cardlist.addCard,
+  node: document.querySelector(".add-card-popup"),
+});
+
+const addCardForm = addCardPopup.popup.querySelector(".popup__form");
+addCardPopup.onClose(() => {
+  addCardForm.reset();
+  deleteErrors(addCardForm);
+});
+
+const addCardSubmit = addCardForm.elements.submit;
+addCardSubmit.addEventListener("click", (event) => {
+  event.preventDefault();
+  const name = addCardForm.elements.name.value;
+  const link = addCardForm.elements.link.value;
+
+  const card = newCard({ name, link }, createPopupImg);
+  placesList.addCard(card);
+
+  addCardForm.reset();
+  addCardPopup.close();
+  deleteErrors(addCardForm);
+});
+
+const addCardButton = document.querySelector(".user-info__button");
+addCardButton.addEventListener("click", (event) => {
+  addCardSubmit.classList.remove("popup__button_enabled");
+  addCardSubmit.setAttribute("disabled", "disabled");
+
+  addCardPopup.open(event);
+  new FormValidator(addCardForm);
 });
 
 const userInfo = new UserInfo(
@@ -34,39 +70,33 @@ const userInfo = new UserInfo(
 );
 
 const editProfilePopup = new Popup({
-  formContent: {
-    title: "Редактировать страницу",
-    buttonName: "Сохранить",
-    inputs: [
-      {
-        name: "name",
-        placeholder: "Имя",
-      },
-      {
-        name: "about",
-        placeholder: "О себе",
-      },
-    ],
-  },
-  updateUserInfo: userInfo.updateUserInfo,
-  getUserInfo: userInfo.getUserInfo,
+  node: document.querySelector(".edit-profile-popup"),
+});
+
+const editProfileForm = editProfilePopup.popup.querySelector(".popup__form");
+editProfilePopup.onClose(() => {
+  deleteErrors(editProfileForm);
+});
+
+const editProfileSubmit = editProfileForm.elements.submit;
+
+editProfileSubmit.addEventListener("click", (event) => {
+  event.preventDefault();
+  userInfo.updateUserInfo(editProfileForm);
+  editProfilePopup.close();
 });
 
 const editProfileButton = document.querySelector(".user-info__edit");
-const addCardButton = document.querySelector(".user-info__button");
-
 editProfileButton.addEventListener("click", (event) => {
-  editProfilePopup.open(event);
-  new FormValidator(document.querySelector(".popup__form"), {
-    name: ["empty", "length"],
-    about: ["empty", "length"],
-  });
-});
+  // вручную включаем кнопку submit при открытии поп апа редактирования профиля
+  editProfileSubmit.classList.add("popup__button_enabled");
+  editProfileSubmit.removeAttribute("disabled", "disabled");
 
-addCardButton.addEventListener("click", (event) => {
-  addCardPopup.open(event);
-  new FormValidator(document.querySelector(".popup__form"), {
-    name: ["empty", "length"],
-    link: ["empty", "url"],
-  });
+  const curUserInfo = userInfo.getUserInfo();
+
+  editProfileForm.elements.name.value = curUserInfo.name;
+  editProfileForm.elements.about.value = curUserInfo.about;
+
+  editProfilePopup.open(event);
+  new FormValidator(editProfileForm);
 });
