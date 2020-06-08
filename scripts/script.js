@@ -1,13 +1,19 @@
 "use strict";
 
+const api = new Api({
+  baseUrl: "https://praktikum.tk/cohort11",
+  headers: {
+    authorization: "token",
+    "Content-Type": "application/json",
+  },
+});
+
 const imgPopup = new Popup({ node: document.querySelector(".image-popup") });
-
 const imagePopupNode = document.querySelector(".popup__image");
-
-function createPopupImg(imgLink) {
+const createPopupImg = (imgLink) => {
   imagePopupNode.src = imgLink;
   imgPopup.open();
-}
+};
 
 const newCard = (elem, createPopupImg) => {
   const card = new Card(
@@ -20,11 +26,18 @@ const newCard = (elem, createPopupImg) => {
 
 const placesList = new CardList(
   document.querySelector(".places-list"),
-  initialCards,
   newCard
 );
 
-placesList.render(createPopupImg);
+api.getCards().then((cards) => {
+  cards.forEach((card) => {
+    const cardElement = newCard(
+      { name: card.name, link: card.link },
+      createPopupImg
+    );
+    placesList.addCard(cardElement);
+  });
+});
 
 const deleteErrors = (form) => {
   const errorMessages = form.querySelectorAll(".error");
@@ -48,6 +61,9 @@ addCardSubmit.addEventListener("click", (event) => {
   const link = addCardForm.elements.link.value;
 
   const card = newCard({ name, link }, createPopupImg);
+  api.addCard(name, link).then((res) => {
+    console.log(res);
+  });
   placesList.addCard(card);
 
   addCardForm.reset();
@@ -64,10 +80,12 @@ addCardButton.addEventListener("click", (event) => {
   new FormValidator(addCardForm);
 });
 
-const userInfo = new UserInfo(
-  document.querySelector(".user-info__name").textContent,
-  document.querySelector(".user-info__job").textContent
-);
+const userInfo = new UserInfo();
+
+const initialUserInfo = api.getUserInfo().then((data) => {
+  userInfo.setUserInfo({ name: data.name, about: data.about });
+  userInfo.updateUserInfo();
+});
 
 const editProfilePopup = new Popup({
   node: document.querySelector(".edit-profile-popup"),
@@ -82,7 +100,12 @@ const editProfileSubmit = editProfileForm.elements.submit;
 
 editProfileSubmit.addEventListener("click", (event) => {
   event.preventDefault();
-  userInfo.updateUserInfo(editProfileForm);
+  const nameInput = editProfileForm.elements.name.value;
+  const aboutInput = editProfileForm.elements.about.value;
+
+  userInfo.setUserInfo({ name: nameInput, about: aboutInput });
+  api.editUserInfo(nameInput, aboutInput);
+  userInfo.updateUserInfo();
   editProfilePopup.close();
 });
 
