@@ -25,6 +25,30 @@
       </div>
       <div class="places-list root__section"></div>
 
+      <div class="popup edit-avatar-popup">
+        <div class="popup__content">
+          <img src="./images/close.svg" alt="" class="popup__close" />
+          <h3 class="popup__title">Обновить аватар</h3>
+          <form class="popup__form" novalidate>
+            <input
+              type="url"
+              name="link"
+              class="popup__input"
+              placeholder="Ссылка на картинку"
+              required
+            />
+            <span id="link-error" class="error"></span>
+            <button
+              name="submit"
+              type="submit"
+              class="button popup__button popup__button_enabled popup__button_font-size_s"
+            >
+              Сохранить
+            </button>
+          </form>
+        </div>
+      </div>
+
       <div class="popup edit-profile-popup">
         <div class="popup__content">
           <img src="./images/close.svg" alt="" class="popup__close" />
@@ -100,12 +124,13 @@
 
     <template id="card-template" style="display: none;">
       <div class="place-card">
-        <div class="place-card__image">
-          <button class="place-card__delete-icon"></button>
-        </div>
+        <div class="place-card__image"></div>
         <div class="place-card__description">
           <h3 class="place-card__name"></h3>
-          <button class="place-card__like-icon"></button>
+          <div class="place-card__like-container">
+            <button class="place-card__like-icon"></button>
+            <span class="place-card__like-counter"></span>
+          </div>
         </div>
       </div>
     </template>
