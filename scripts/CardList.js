@@ -8,4 +8,10 @@ class CardList {
   addCard = (element) => {
     this._node.append(element);
   };
+
+  render = (cardsList) => {
+    cardsList.forEach((card) => {
+      this.addCard(card);
+    });
+  };
 }

@@ -8,12 +8,19 @@ class UserInfo {
   }
 
   getUserInfo = () => {
-    return { name: this._name, about: this._about };
+    return { name: this._name, about: this._about, id: this._id };
   };
 
-  setUserInfo = ({ name, about }) => {
+  setUserInfo = ({ name, about, id }) => {
     this._name = name;
     this._about = about;
+    this._id = id;
+  };
+
+  updateAvatar = (link) => {
+    document
+      .querySelector(".user-info__photo")
+      .setAttribute("style", `background-image: url(${link})`);
   };
 
   updateUserInfo = () => {

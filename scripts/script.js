@@ -1,14 +1,42 @@
 "use strict";
 
+let initialSubmitText = "";
+const renderLoading = (isLoading, submit) => {
+  if (isLoading) {
+    initialSubmitText = submit.textContent;
+    submit.textContent = "Загрузка...";
+  } else {
+    submit.textContent = initialSubmitText;
+  }
+};
+
 const api = new Api({
   baseUrl: "https://praktikum.tk/cohort11",
   headers: {
-    authorization: "token",
+    authorization: "",
     "Content-Type": "application/json",
   },
 });
 
+const userInfo = new UserInfo();
+
+api
+  .getUserInfo()
+  .then((data) => {
+    userInfo.setUserInfo({
+      name: data.name,
+      about: data.about,
+      id: data._id,
+    });
+    userInfo.updateAvatar(data.avatar);
+    userInfo.updateUserInfo();
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 const imgPopup = new Popup({ node: document.querySelector(".image-popup") });
+
 const imagePopupNode = document.querySelector(".popup__image");
 const createPopupImg = (imgLink) => {
   imagePopupNode.src = imgLink;
@@ -19,7 +47,10 @@ const newCard = (elem, createPopupImg) => {
   const card = new Card(
     document.querySelector("#card-template").content,
     elem,
-    createPopupImg
+    createPopupImg,
+    api.deleteCard,
+    api.likeCard,
+    api.unlikeCard
   );
   return card.create();
 };
@@ -29,49 +60,54 @@ const placesList = new CardList(
   newCard
 );
 
-api.getCards().then((cards) => {
-  cards.forEach((card) => {
-    const cardElement = newCard(
-      { name: card.name, link: card.link },
-      createPopupImg
-    );
-    placesList.addCard(cardElement);
+api
+  .getCards()
+  .then((cards) => {
+    const cardsList = [];
+    cards.forEach((card) => {
+      const isLikedByUser = card.likes.some(
+        (like) => like._id === userInfo.getUserInfo().id
+      );
+      const isAddedByUser = card.owner._id === userInfo.getUserInfo().id;
+      const cardElement = newCard(
+        {
+          name: card.name,
+          link: card.link,
+          id: card._id,
+          isLikedByUser: isLikedByUser,
+          isAddedByUser: isAddedByUser,
+          likesCount: card.likes.length,
+          owner: card.owner,
+        },
+        createPopupImg
+      );
+      cardsList.push(cardElement);
+    });
+    placesList.render(cardsList);
+  })
+  .catch((err) => {
+    console.log(err);
   });
-});
 
 const deleteErrors = (form) => {
   const errorMessages = form.querySelectorAll(".error");
   Array.from(errorMessages).forEach((error) => (error.textContent = ""));
 };
 
+// ПОП АП КАРТОЧКИ ===============================================================
+
 const addCardPopup = new Popup({
   node: document.querySelector(".add-card-popup"),
 });
-
 const addCardForm = addCardPopup.popup.querySelector(".popup__form");
+const addCardButton = document.querySelector(".user-info__button");
+const addCardSubmit = addCardForm.elements.submit;
+
 addCardPopup.onClose(() => {
   addCardForm.reset();
   deleteErrors(addCardForm);
 });
 
-const addCardSubmit = addCardForm.elements.submit;
-addCardSubmit.addEventListener("click", (event) => {
-  event.preventDefault();
-  const name = addCardForm.elements.name.value;
-  const link = addCardForm.elements.link.value;
-
-  const card = newCard({ name, link }, createPopupImg);
-  api.addCard(name, link).then((res) => {
-    console.log(res);
-  });
-  placesList.addCard(card);
-
-  addCardForm.reset();
-  addCardPopup.close();
-  deleteErrors(addCardForm);
-});
-
-const addCardButton = document.querySelector(".user-info__button");
 addCardButton.addEventListener("click", (event) => {
   addCardSubmit.classList.remove("popup__button_enabled");
   addCardSubmit.setAttribute("disabled", "disabled");
@@ -80,38 +116,86 @@ addCardButton.addEventListener("click", (event) => {
   new FormValidator(addCardForm);
 });
 
-const userInfo = new UserInfo();
+addCardSubmit.addEventListener("click", (event) => {
+  event.preventDefault();
+  renderLoading(true, addCardSubmit);
+  const name = addCardForm.elements.name.value;
+  const link = addCardForm.elements.link.value;
 
-const initialUserInfo = api.getUserInfo().then((data) => {
-  userInfo.setUserInfo({ name: data.name, about: data.about });
-  userInfo.updateUserInfo();
+  api
+    .addCard(name, link)
+    .then((res) => {
+      const card = newCard(
+        { name, link, id: res._id, likesCount: 0, isAddedByUser: true },
+        createPopupImg
+      );
+      placesList.addCard(card);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      addCardForm.reset();
+      addCardPopup.close();
+      deleteErrors(addCardForm);
+      renderLoading(false, addCardSubmit);
+    });
 });
+
+// ПОП АП АВАТАРА ===============================================================
+
+const editAvatarPopup = new Popup({
+  node: document.querySelector(".edit-avatar-popup"),
+});
+const editAvatarForm = editAvatarPopup.popup.querySelector(".popup__form");
+const avatar = document.querySelector(".user-info__photo");
+const editAvatarSubmit = editAvatarForm.elements.submit;
+
+editAvatarPopup.onClose(() => {
+  deleteErrors(editAvatarForm);
+});
+
+avatar.addEventListener("click", (event) => {
+  editAvatarSubmit.classList.remove("popup__button_enabled");
+  editAvatarSubmit.setAttribute("disabled", "disabled");
+
+  editAvatarPopup.open(event);
+  new FormValidator(editAvatarForm);
+});
+
+editAvatarSubmit.addEventListener("click", (event) => {
+  event.preventDefault();
+  renderLoading(true, editAvatarSubmit);
+  const link = editAvatarForm.elements.link.value;
+  api
+    .updateAvatar(link)
+    .then(() => {
+      userInfo.updateAvatar(link);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      editAvatarForm.reset();
+      editAvatarPopup.close();
+      renderLoading(false, editAvatarSubmit);
+    });
+});
+
+// ПОП АП ПРОФИЛЯ ===============================================================
 
 const editProfilePopup = new Popup({
   node: document.querySelector(".edit-profile-popup"),
 });
-
 const editProfileForm = editProfilePopup.popup.querySelector(".popup__form");
+const editProfileButton = document.querySelector(".user-info__edit");
+const editProfileSubmit = editProfileForm.elements.submit;
+
 editProfilePopup.onClose(() => {
   deleteErrors(editProfileForm);
 });
 
-const editProfileSubmit = editProfileForm.elements.submit;
-
-editProfileSubmit.addEventListener("click", (event) => {
-  event.preventDefault();
-  const nameInput = editProfileForm.elements.name.value;
-  const aboutInput = editProfileForm.elements.about.value;
-
-  userInfo.setUserInfo({ name: nameInput, about: aboutInput });
-  api.editUserInfo(nameInput, aboutInput);
-  userInfo.updateUserInfo();
-  editProfilePopup.close();
-});
-
-const editProfileButton = document.querySelector(".user-info__edit");
 editProfileButton.addEventListener("click", (event) => {
-  // вручную включаем кнопку submit при открытии поп апа редактирования профиля
   editProfileSubmit.classList.add("popup__button_enabled");
   editProfileSubmit.removeAttribute("disabled", "disabled");
 
@@ -122,4 +206,31 @@ editProfileButton.addEventListener("click", (event) => {
 
   editProfilePopup.open(event);
   new FormValidator(editProfileForm);
+});
+
+editProfileSubmit.addEventListener("click", (event) => {
+  event.preventDefault();
+  const nameInput = editProfileForm.elements.name.value;
+  const aboutInput = editProfileForm.elements.about.value;
+  renderLoading(true, editProfileSubmit);
+
+  api
+    .editUserInfo(nameInput, aboutInput)
+    .then((data) => {
+      userInfo.setUserInfo({ name: data.name, about: data.about });
+
+      document.querySelector(
+        ".user-info__name"
+      ).textContent = userInfo.getUserInfo().name;
+      document.querySelector(
+        ".user-info__job"
+      ).textContent = userInfo.getUserInfo().about;
+      editProfilePopup.close();
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, editProfileSubmit);
+    });
 });

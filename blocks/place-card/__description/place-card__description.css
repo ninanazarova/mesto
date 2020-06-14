@@ -1,5 +1,6 @@
 .place-card__description {
   display: flex;
+  grid-template-columns: 2;
   min-height: 78px;
   align-items: center;
   justify-content: space-between;
