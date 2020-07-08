@@ -1,6 +1,6 @@
 "use strict";
 
-class Card {
+export class Card {
   constructor(
     template,
     { name, link, likesCount, id, isLikedByUser, isAddedByUser },

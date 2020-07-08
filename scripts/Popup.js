@@ -1,6 +1,6 @@
 "use strict";
 
-class Popup {
+export class Popup {
   constructor({ node }) {
     this.popup = node;
     this._closeButton = this.popup.querySelector(".popup__close");

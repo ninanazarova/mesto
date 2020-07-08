@@ -1,6 +1,6 @@
 "use strict";
 
-class CardList {
+export class CardList {
   constructor(node) {
     this._node = node;
   }
