@@ -18,8 +18,13 @@ const renderLoading = (isLoading, submit) => {
   }
 };
 
+const serverUrl =
+  NODE_ENV === "development"
+    ? "http://praktikum.tk/cohort11"
+    : "https://praktikum.tk/cohort11";
+
 const api = new Api({
-  baseUrl: "https://praktikum.tk/cohort11",
+  baseUrl: serverUrl,
   headers: {
     authorization: "2ac7f944-90d6-45e2-acd0-f299480fc199",
     "Content-Type": "application/json",
