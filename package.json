@@ -2,7 +2,7 @@
   "name": "mesto",
   "homepage": "https://ninanazarova.github.io/mesto/",
   "version": "0.0.1",
-  "description": "",
+  "description": "An interactive page where you can add photos, delete and like them",
   "main": "index.js",
   "scripts": {
     "build": "cross-env NODE_ENV=production rimraf dist && webpack --mode production",

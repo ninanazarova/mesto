@@ -1,10 +1,10 @@
 import "./index.css";
-import { Api } from "../scripts/Api.js";
-import { Card } from "../scripts/Card.js";
-import { CardList } from "../scripts/CardList.js";
-import { FormValidator } from "../scripts/FormValidator.js";
-import { Popup } from "../scripts/Popup.js";
-import { UserInfo } from "../scripts/UserInfo.js";
+import { Api } from "./scripts/Api.js";
+import { Card } from "./scripts/Card.js";
+import { CardList } from "./scripts/CardList.js";
+import { FormValidator } from "./scripts/FormValidator.js";
+import { Popup } from "./scripts/Popup.js";
+import { UserInfo } from "./scripts/UserInfo.js";
 
 let initialSubmitText = "";
 const renderLoading = (isLoading, submit) => {
