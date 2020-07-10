@@ -1,19 +1,32 @@
-"use strict";
+import "./index.css";
+import { Api } from "./scripts/Api.js";
+import { Card } from "./scripts/Card.js";
+import { CardList } from "./scripts/CardList.js";
+import { FormValidator } from "./scripts/FormValidator.js";
+import { Popup } from "./scripts/Popup.js";
+import { UserInfo } from "./scripts/UserInfo.js";
 
 let initialSubmitText = "";
 const renderLoading = (isLoading, submit) => {
   if (isLoading) {
     initialSubmitText = submit.textContent;
+    submit.style.fontSize = "18px";
     submit.textContent = "Загрузка...";
   } else {
+    submit.style.fontSize = "36px";
     submit.textContent = initialSubmitText;
   }
 };
 
+const serverUrl =
+  NODE_ENV === "development"
+    ? "http://praktikum.tk/cohort11"
+    : "https://praktikum.tk/cohort11";
+
 const api = new Api({
-  baseUrl: "https://praktikum.tk/cohort11",
+  baseUrl: serverUrl,
   headers: {
-    authorization: "",
+    authorization: "2ac7f944-90d6-45e2-acd0-f299480fc199",
     "Content-Type": "application/json",
   },
 });
