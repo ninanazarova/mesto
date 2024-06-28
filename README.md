@@ -1,25 +1,11 @@
 # mesto
 
-#### Интерактивная страница, куда можно добавлять фотографии, удалять их и ставить лайки
+#### An interactive page where you can add photos, delete and like them
 
 _v 0.0.2_
 
-Учебный проект на нативном JavaScript(ES6+). Код структурирован по принципам ООП, разбит на модули. Подключен Webpack, Babel. CSS-код минифицирован с помощью PostCSS
+Tutorial project on native JavaScript(ES6+). The code is structured according to OOP principles, divided into modules. Technologies used: Webpack, Babel, PostCSS.
 
-Посмотреть сайт можно [тут](https://ninanazarova.github.io/mesto/)
+View the site [here](https://ninanazarova.github.io/mesto/).
 
-### Как запустить проект
-
-В develop сборке
-
-```
-npm i
-
-npm run dev
-```
-
-В production сборке
-
-```
-npm run build
-```
+Yandex.Practicum
